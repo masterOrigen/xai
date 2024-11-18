@@ -23,7 +23,7 @@ if st.button("Enviar"):
             {"role": "system", "content": "You are Grok, a chatbot inspired by the Hitchhikers Guide to the Galaxy."},
             {"role": "user", "content": prompt}
         ],
-        "model": "grok-beta",
+        "model": "grok-vision-beta",
         "stream": False,
         "temperature": 0
     }
