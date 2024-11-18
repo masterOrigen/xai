@@ -45,7 +45,32 @@ with tabs[1]:
     uploaded_file = st.file_uploader("Sube un documento", type=["txt", "pdf", "docx"])
     if uploaded_file:
         st.write(f"Documento cargado: {uploaded_file.name}")
-        # Aquí se puede procesar el archivo y enviar su contenido a la API
+        # Procesar el contenido del archivo aquí si es necesario
+        document_content = uploaded_file.read().decode('utf-8')  # Supongamos que es un archivo de texto simple
+
+        # Muestra un área de texto para interactuar con el contenido
+        interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:")
+        if st.button("Enviar pregunta sobre el documento"):
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {API_KEY}"
+            }
+            data = {
+                "messages": [
+                    {"role": "system", "content": "You are Grok, an assistant analyzing a document."},
+                    {"role": "user", "content": document_content},
+                    {"role": "user", "content": interaction_prompt}
+                ],
+                "model": "grok-vision-beta",
+                "stream": False,
+                "temperature": 0
+            }
+            response = requests.post(API_URL, headers=headers, json=data)
+            if response.status_code == 200:
+                answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
+                st.write("Respuesta:", answer)
+            else:
+                st.write("Error al enviar la pregunta a la API")
 
 # Pestaña de Generación de Imágenes
 with tabs[2]:
@@ -53,7 +78,6 @@ with tabs[2]:
     image_prompt = st.text_input("Descripción para la imagen a generar:")
     if st.button("Crear Imagen"):
         if image_prompt:
-            # Ejemplo de llamada a una API para generación de imágenes
             image_response = requests.post(
                 API_URL,
                 headers={"Authorization": f"Bearer {API_KEY}"},
