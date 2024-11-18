@@ -3,34 +3,35 @@ import requests
 from dotenv import load_dotenv
 import os
 
-# Cargar variables de entorno desde el archivo .env
+# Cargar variables de entorno
 load_dotenv()
 
-# Configurar el endpoint de la API y las credenciales
-API_URL = os.getenv("API_URL")
-API_KEY = os.getenv("API_KEY")
+API_URL = "https://api.x.ai/v1/chat/completions"
+API_KEY = os.getenv("XAI_API_KEY")  # Asegúrate que tu .env tiene XAI_API_KEY
 
-st.title("Aplicación de Chat con x.ai y grok-vision-beta")
+st.title("Aplicación de Chat con x.ai y Grok")
 
-# Subir documentos
-uploaded_file = st.file_uploader("Sube un documento", type=["txt", "pdf", "docx"])
-if uploaded_file:
-    st.write("Documento subido:", uploaded_file.name)
-
-# Chat y Preguntas
+# Obtener mensaje del usuario
 prompt = st.text_input("Escribe tu pregunta o mensaje:")
 if st.button("Enviar"):
-    response = requests.post(API_URL, headers={"Authorization": f"Bearer {API_KEY}"}, json={"prompt": prompt})
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {API_KEY}"
+    }
+    data = {
+        "messages": [
+            {"role": "system", "content": "You are Grok, a chatbot inspired by the Hitchhikers Guide to the Galaxy."},
+            {"role": "user", "content": prompt}
+        ],
+        "model": "grok-beta",
+        "stream": False,
+        "temperature": 0
+    }
+    response = requests.post(API_URL, headers=headers, json=data)
     if response.status_code == 200:
-        st.write("Respuesta:", response.json().get("answer", "Error en la respuesta"))
+        answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
+        st.write("Respuesta:", answer)
     else:
         st.write("Error en la llamada a la API")
 
-# Generación de Imágenes
-if st.button("Generar Imagen"):
-    image_response = requests.post(API_URL, headers={"Authorization": f"Bearer {API_KEY}"}, json={"task": "generate_image", "description": prompt})
-    if image_response.status_code == 200:
-        image_url = image_response.json().get("image_url")
-        st.image(image_url, caption="Imagen Generada")
-    else:
-        st.write("Error en la generación de la imagen")
+# Otras características - subir documentos, generar imágenes, etc.
