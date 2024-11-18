@@ -1,5 +1,5 @@
 streamlit
 requests
 python-dotenv
-PyPDF2  # Descomenta si necesitas soporte para PDF
-python-docx  # Descomenta si necesitas soporte para DOCX
+PyPDF2  # Para manejar archivos PDF, si es necesario
+python-docx  # Para manejar archivos DOCX, si es necesario
