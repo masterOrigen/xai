@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from dotenv import load_dotenv
 import os
+import PyPDF2  # Asegúrate de tener instalada esta librería
 
 # Cargar variables de entorno
 load_dotenv()
@@ -48,12 +49,20 @@ with tabs[1]:
     if uploaded_file:
         st.write(f"Documento cargado: {uploaded_file.name}")
         
-        try:
-            document_content = uploaded_file.read().decode('utf-8')
-        except UnicodeDecodeError:
-            document_content = uploaded_file.read().decode('latin1')
-        
-        if document_content.strip():
+        document_content = ""
+        # Procesar el archivo dependiendo de su tipo
+        if uploaded_file.name.endswith(".txt"):
+            try:
+                document_content = uploaded_file.read().decode('utf-8').strip()
+            except UnicodeDecodeError:
+                document_content = uploaded_file.read().decode('latin1').strip()
+        elif uploaded_file.name.endswith(".pdf"):
+            reader = PyPDF2.PdfReader(uploaded_file)
+            for page in reader.pages:
+                document_content += page.extract_text()
+            document_content = document_content.strip()
+
+        if document_content:
             interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:")
             if st.button("Enviar pregunta sobre el documento") and interaction_prompt.strip():
                 headers = {
