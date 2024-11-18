@@ -45,9 +45,12 @@ with tabs[1]:
     uploaded_file = st.file_uploader("Sube un documento", type=["txt", "pdf", "docx"])
     if uploaded_file:
         st.write(f"Documento cargado: {uploaded_file.name}")
-        # Procesar el contenido del archivo aquí si es necesario
-        document_content = uploaded_file.read().decode('utf-8')  # Supongamos que es un archivo de texto simple
-
+        
+        try:
+            document_content = uploaded_file.read().decode('utf-8')
+        except UnicodeDecodeError:
+            document_content = uploaded_file.read().decode('latin1')
+        
         # Muestra un área de texto para interactuar con el contenido
         interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:")
         if st.button("Enviar pregunta sobre el documento"):
