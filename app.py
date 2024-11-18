@@ -12,6 +12,10 @@ API_KEY = os.getenv("XAI_API_KEY")
 
 st.title("Aplicación de Chat con x.ai y Grok")
 
+def truncate_content(content, max_words=7500):
+    words = content.split()
+    return ' '.join(words[:max_words])
+
 # Crear pestañas
 tabs = st.tabs(["Chat", "Interactuar con Documentos", "Generar Imágenes"])
 
@@ -63,6 +67,9 @@ with tabs[1]:
             document_content = document_content.strip()
 
         if document_content:
+            # Truncar contenido si es demasiado largo
+            truncated_content = truncate_content(document_content)
+
             interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:")
             if st.button("Enviar pregunta sobre el documento") and interaction_prompt.strip():
                 headers = {
@@ -72,7 +79,7 @@ with tabs[1]:
                 data = {
                     "messages": [
                         {"role": "system", "content": "You are Grok, an assistant analyzing a document."},
-                        {"role": "user", "content": document_content},
+                        {"role": "user", "content": truncated_content},
                         {"role": "user", "content": interaction_prompt}
                     ],
                     "model": "grok-vision-beta",
