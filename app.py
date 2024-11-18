@@ -37,7 +37,7 @@ with tabs[0]:
             answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
             st.write("Respuesta:", answer)
         else:
-            st.write("Error en la llamada a la API")
+            st.write(f"Error en la llamada a la API: {response.status_code} - {response.text}")
 
 # Pestaña de Interacción con Documentos
 with tabs[1]:
@@ -73,7 +73,7 @@ with tabs[1]:
                 answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
                 st.write("Respuesta:", answer)
             else:
-                st.write("Error al enviar la pregunta a la API")
+                st.write(f"Error al enviar la pregunta a la API: {response.status_code} - {response.text}")
 
 # Pestaña de Generación de Imágenes
 with tabs[2]:
@@ -83,7 +83,10 @@ with tabs[2]:
         if image_prompt:
             image_response = requests.post(
                 API_URL,
-                headers={"Authorization": f"Bearer {API_KEY}"},
+                headers={
+                    "Content-Type": "application/json",
+                    "Authorization": f"Bearer {API_KEY}"
+                },
                 json={"task": "generate_image", "description": image_prompt}
             )
             if image_response.status_code == 200:
@@ -93,4 +96,4 @@ with tabs[2]:
                 else:
                     st.write("Error: no se pudo generar la imagen")
             else:
-                st.write("Error en la llamada a la API para generar imagen")
+                st.write(f"Error en la llamada a la API para generar imagen: {image_response.status_code} - {image_response.text}")
