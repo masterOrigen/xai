@@ -96,7 +96,7 @@ with tabs[1]:
                 st.write("Por favor, ingresa una pregunta válida.")
         else:
             st.write("El documento cargado está vacío o no se pudo leer correctamente.")
-
+            
 # Pestaña de Generación de Imágenes
 with tabs[2]:
     st.header("Generar Imágenes")
@@ -108,7 +108,11 @@ with tabs[2]:
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {API_KEY}"
             },
-            json={"task": "generate_image", "description": image_prompt}
+            json={
+                "model": "grok-vision-beta",
+                "task": "generate_image",
+                "description": image_prompt
+            }
         )
         if image_response.status_code == 200:
             image_url = image_response.json().get("image_url")
