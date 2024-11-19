@@ -21,7 +21,7 @@ tabs = st.tabs(["Chat", "Chat con Documentos"])
 with tabs[0]:
     st.header("Chat")
     chat_prompt = st.empty()
-    prompt = chat_prompt.text_area("Escribe tu pregunta o mensaje:")
+    prompt = chat_prompt.text_area("Escribe tu pregunta o mensaje:", key="chat_prompt")
     if st.button("Enviar") and prompt.strip():
         headers = {
             "Content-Type": "application/json",
@@ -41,7 +41,7 @@ with tabs[0]:
             if response.status_code == 200:
                 answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
                 st.write("Respuesta:", answer)
-                chat_prompt.text_area("Escribe tu pregunta o mensaje:", "")
+                chat_prompt.text_area("Escribe tu pregunta o mensaje:", "", key="chat_prompt")
             else:
                 st.write(f"Error en la llamada a la API: {response.status_code} - {response.text}")
     elif not prompt.strip():
@@ -72,7 +72,7 @@ with tabs[1]:
             truncated_content = truncate_content(document_content)
 
             doc_prompt = st.empty()
-            interaction_prompt = doc_prompt.text_area("Escribe una pregunta sobre el documento:")
+            interaction_prompt = doc_prompt.text_area("Escribe una pregunta sobre el documento:", key="doc_prompt")
             if st.button("Enviar pregunta sobre el documento") and interaction_prompt.strip():
                 headers = {
                     "Content-Type": "application/json",
@@ -93,7 +93,7 @@ with tabs[1]:
                     if response.status_code == 200:
                         answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
                         st.write("Respuesta:", answer)
-                        doc_prompt.text_area("Escribe una pregunta sobre el documento:", "")
+                        doc_prompt.text_area("Escribe una pregunta sobre el documento:", "", key="doc_prompt")
                     else:
                         st.write(f"Error al enviar la pregunta a la API: {response.status_code} - {response.text}")
             elif not interaction_prompt.strip():
