@@ -49,8 +49,6 @@ with tabs[0]:
                 st.session_state["chat_prompt"] = ""  # Limpiar el campo de texto
             else:
                 st.write(f"Error en la llamada a la API: {response.status_code} - {response.text}")
-    elif not prompt.strip():
-        st.write("Por favor, ingresa un mensaje válido.")
 
 # Pestaña de Chat con Documentos
 with tabs[1]:
@@ -105,7 +103,5 @@ with tabs[1]:
                         st.session_state["doc_prompt"] = ""  # Limpiar el campo de texto
                     else:
                         st.write(f"Error al enviar la pregunta a la API: {response.status_code} - {response.text}")
-            elif not interaction_prompt.strip():
-                st.write("Por favor, ingresa una pregunta válida.")
         else:
             st.write("El documento cargado está vacío o no se pudo leer correctamente.")
