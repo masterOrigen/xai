@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 from dotenv import load_dotenv
 import os
-import PyPDF2  # Asegúrate de tener instalada esta librería
+import PyPDF2
 
 # Cargar variables de entorno
 load_dotenv()
@@ -20,8 +20,13 @@ tabs = st.tabs(["Chat", "Chat con Documentos"])
 # Pestaña de Chat
 with tabs[0]:
     st.header("Chat")
-    chat_key = "chat_prompt_area"
-    prompt = st.text_area("Escribe tu pregunta o mensaje:", key=chat_key)
+
+    # Inicializa el estado si no existe
+    if "chat_prompt" not in st.session_state:
+        st.session_state["chat_prompt"] = ""
+
+    prompt = st.text_area("Escribe tu pregunta o mensaje:", value=st.session_state["chat_prompt"], key="chat_prompt_area")
+
     if st.button("Enviar", key="send_chat_button") and prompt.strip():
         headers = {
             "Content-Type": "application/json",
@@ -41,7 +46,7 @@ with tabs[0]:
             if response.status_code == 200:
                 answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
                 st.write("Respuesta:", answer)
-                st.session_state[chat_key] = ""  # Limpiar el campo de texto
+                st.session_state["chat_prompt"] = ""  # Limpiar el campo de texto
             else:
                 st.write(f"Error en la llamada a la API: {response.status_code} - {response.text}")
     elif not prompt.strip():
@@ -50,6 +55,11 @@ with tabs[0]:
 # Pestaña de Chat con Documentos
 with tabs[1]:
     st.header("Chat con Documentos")
+
+    # Inicializa el estado si no existe
+    if "doc_prompt" not in st.session_state:
+        st.session_state["doc_prompt"] = ""
+
     uploaded_file = st.file_uploader("Sube un documento", type=["txt", "pdf", "docx"])
     if uploaded_file:
         st.write(f"Documento cargado: {uploaded_file.name}")
@@ -71,8 +81,7 @@ with tabs[1]:
             # Truncar contenido si es demasiado largo
             truncated_content = truncate_content(document_content)
 
-            doc_key = "doc_prompt_area"
-            interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:", key=doc_key)
+            interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:", value=st.session_state["doc_prompt"], key="doc_prompt_area")
             if st.button("Enviar pregunta sobre el documento", key="send_doc_button") and interaction_prompt.strip():
                 headers = {
                     "Content-Type": "application/json",
@@ -93,7 +102,7 @@ with tabs[1]:
                     if response.status_code == 200:
                         answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
                         st.write("Respuesta:", answer)
-                        st.session_state[doc_key] = ""  # Limpiar el campo de texto
+                        st.session_state["doc_prompt"] = ""  # Limpiar el campo de texto
                     else:
                         st.write(f"Error al enviar la pregunta a la API: {response.status_code} - {response.text}")
             elif not interaction_prompt.strip():
