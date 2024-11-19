@@ -82,7 +82,7 @@ with tabs[1]:
                         {"role": "user", "content": truncated_content},
                         {"role": "user", "content": interaction_prompt}
                     ],
-                    "model": "grok-vision-beta",
+                    "model": "grok-beta",  # Uso del modelo grok-beta para documentos
                     "stream": False,
                     "temperature": 0
                 }
