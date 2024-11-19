@@ -46,7 +46,7 @@ with tabs[0]:
 
 # Pestaña de Interacción con Documentos
 with tabs[1]:
-    st.header("Interactuar con Documentos")
+    st.header("Chat con Documentos")
     uploaded_file = st.file_uploader("Sube un documento", type=["txt", "pdf", "docx"])
     if uploaded_file:
         st.write(f"Documento cargado: {uploaded_file.name}")
