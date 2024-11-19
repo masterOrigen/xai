@@ -20,9 +20,9 @@ tabs = st.tabs(["Chat", "Chat con Documentos"])
 # Pestaña de Chat
 with tabs[0]:
     st.header("Chat")
-    chat_prompt = st.empty()
-    prompt = chat_prompt.text_area("Escribe tu pregunta o mensaje:", key="chat_prompt")
-    if st.button("Enviar") and prompt.strip():
+    # Utiliza una key diferente cada vez que redibujas el elemento
+    prompt = st.text_area("Escribe tu pregunta o mensaje:", key="chat_prompt_area")
+    if st.button("Enviar", key="send_chat_prompt") and prompt.strip():
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {API_KEY}"
@@ -41,7 +41,7 @@ with tabs[0]:
             if response.status_code == 200:
                 answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
                 st.write("Respuesta:", answer)
-                chat_prompt.text_area("Escribe tu pregunta o mensaje:", "", key="chat_prompt")
+                st.text_area("Escribe tu pregunta o mensaje:", key="chat_prompt_area", value="")
             else:
                 st.write(f"Error en la llamada a la API: {response.status_code} - {response.text}")
     elif not prompt.strip():
@@ -71,9 +71,8 @@ with tabs[1]:
             # Truncar contenido si es demasiado largo
             truncated_content = truncate_content(document_content)
 
-            doc_prompt = st.empty()
-            interaction_prompt = doc_prompt.text_area("Escribe una pregunta sobre el documento:", key="doc_prompt")
-            if st.button("Enviar pregunta sobre el documento") and interaction_prompt.strip():
+            interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:", key="doc_prompt_area")
+            if st.button("Enviar pregunta sobre el documento", key="send_doc_prompt") and interaction_prompt.strip():
                 headers = {
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {API_KEY}"
@@ -93,7 +92,7 @@ with tabs[1]:
                     if response.status_code == 200:
                         answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
                         st.write("Respuesta:", answer)
-                        doc_prompt.text_area("Escribe una pregunta sobre el documento:", "", key="doc_prompt")
+                        st.text_area("Escribe una pregunta sobre el documento:", key="doc_prompt_area", value="")
                     else:
                         st.write(f"Error al enviar la pregunta a la API: {response.status_code} - {response.text}")
             elif not interaction_prompt.strip():
