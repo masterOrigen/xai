@@ -10,9 +10,7 @@ load_dotenv()
 API_URL = "https://api.x.ai/v1/chat/completions"
 API_KEY = os.getenv("XAI_API_KEY")
 
-st.title("Aplicación de Chat con x.ai y Grok")
-
-def truncate_content(content, max_words=7500):
+def truncate_content(content, max_words=17500):
     words = content.split()
     return ' '.join(words[:max_words])
 
