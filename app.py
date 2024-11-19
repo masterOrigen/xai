@@ -15,7 +15,7 @@ def truncate_content(content, max_words=17500):
     return ' '.join(words[:max_words])
 
 # Crear pestañas
-tabs = st.tabs(["Chat", "Chat con Documentos", "Generar Imágenes"])
+tabs = st.tabs(["Chat", "Chat con Documentos"])
 
 # Pestaña de Chat
 with tabs[0]:
@@ -44,7 +44,7 @@ with tabs[0]:
     elif not prompt.strip():
         st.write("Por favor, ingresa un mensaje válido.")
 
-# Pestaña de Interacción con Documentos
+# Pestaña de Chat con Documentos
 with tabs[1]:
     st.header("Chat con Documentos")
     uploaded_file = st.file_uploader("Sube un documento", type=["txt", "pdf", "docx"])
@@ -94,32 +94,3 @@ with tabs[1]:
                 st.write("Por favor, ingresa una pregunta válida.")
         else:
             st.write("El documento cargado está vacío o no se pudo leer correctamente.")
-            
-# Pestaña de Generación de Imágenes
-with tabs[2]:
-    st.header("Generar Imágenes")
-    image_prompt = st.text_input("Descripción para la imagen a generar:")
-    if st.button("Crear Imagen") and image_prompt.strip():
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {API_KEY}"
-        }
-        data = {
-            "messages": [
-                {"role": "user", "content": image_prompt}
-            ],
-            "model": "grok-vision-beta",
-            "task": "generate_image"
-        }
-        image_response = requests.post(API_URL, headers=headers, json=data)
-        
-        if image_response.status_code == 200:
-            image_url = image_response.json().get("image_url")
-            if image_url:
-                st.image(image_url, caption="Imagen Generada")
-            else:
-                st.write("No se pudo obtener la URL de la imagen. Respuesta:", image_response.json())
-        else:
-            st.write(f"Error en la llamada a la API para generar imagen: {image_response.status_code} - {image_response.text}")
-    elif not image_prompt.strip():
-        st.write("Por favor, ingresa una descripción válida para la imagen.")
