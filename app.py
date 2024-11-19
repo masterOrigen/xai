@@ -19,7 +19,6 @@ tabs = st.tabs(["Chat", "Chat con Documentos"])
 
 # Pestaña de Chat
 with tabs[0]:
-    st.header("Chat")
 
     # Inicializa el estado si no existe
     if "chat_prompt" not in st.session_state:
@@ -52,7 +51,6 @@ with tabs[0]:
 
 # Pestaña de Chat con Documentos
 with tabs[1]:
-    st.header("Chat con Documentos")
 
     # Inicializa el estado si no existe
     if "doc_prompt" not in st.session_state:
