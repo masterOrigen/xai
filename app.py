@@ -20,7 +20,8 @@ tabs = st.tabs(["Chat", "Chat con Documentos"])
 # Pestaña de Chat
 with tabs[0]:
     st.header("Chat")
-    prompt = st.text_area("Escribe tu pregunta o mensaje:")  # Cambiado a área de texto
+    chat_prompt = st.empty()
+    prompt = chat_prompt.text_area("Escribe tu pregunta o mensaje:")
     if st.button("Enviar") and prompt.strip():
         headers = {
             "Content-Type": "application/json",
@@ -35,12 +36,14 @@ with tabs[0]:
             "stream": False,
             "temperature": 0
         }
-        response = requests.post(API_URL, headers=headers, json=data)
-        if response.status_code == 200:
-            answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
-            st.write("Respuesta:", answer)
-        else:
-            st.write(f"Error en la llamada a la API: {response.status_code} - {response.text}")
+        with st.spinner("Estoy pensando..."):
+            response = requests.post(API_URL, headers=headers, json=data)
+            if response.status_code == 200:
+                answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
+                st.write("Respuesta:", answer)
+                chat_prompt.text_area("Escribe tu pregunta o mensaje:", "")
+            else:
+                st.write(f"Error en la llamada a la API: {response.status_code} - {response.text}")
     elif not prompt.strip():
         st.write("Por favor, ingresa un mensaje válido.")
 
@@ -68,7 +71,8 @@ with tabs[1]:
             # Truncar contenido si es demasiado largo
             truncated_content = truncate_content(document_content)
 
-            interaction_prompt = st.text_area("Escribe una pregunta sobre el documento:")
+            doc_prompt = st.empty()
+            interaction_prompt = doc_prompt.text_area("Escribe una pregunta sobre el documento:")
             if st.button("Enviar pregunta sobre el documento") and interaction_prompt.strip():
                 headers = {
                     "Content-Type": "application/json",
@@ -80,16 +84,18 @@ with tabs[1]:
                         {"role": "user", "content": truncated_content},
                         {"role": "user", "content": interaction_prompt}
                     ],
-                    "model": "grok-beta",  # Uso del modelo grok-beta para documentos
+                    "model": "grok-beta",
                     "stream": False,
                     "temperature": 0
                 }
-                response = requests.post(API_URL, headers=headers, json=data)
-                if response.status_code == 200:
-                    answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
-                    st.write("Respuesta:", answer)
-                else:
-                    st.write(f"Error al enviar la pregunta a la API: {response.status_code} - {response.text}")
+                with st.spinner("Estoy pensando..."):
+                    response = requests.post(API_URL, headers=headers, json=data)
+                    if response.status_code == 200:
+                        answer = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Sin respuesta")
+                        st.write("Respuesta:", answer)
+                        doc_prompt.text_area("Escribe una pregunta sobre el documento:", "")
+                    else:
+                        st.write(f"Error al enviar la pregunta a la API: {response.status_code} - {response.text}")
             elif not interaction_prompt.strip():
                 st.write("Por favor, ingresa una pregunta válida.")
         else:
