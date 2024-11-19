@@ -15,7 +15,7 @@ def truncate_content(content, max_words=17500):
     return ' '.join(words[:max_words])
 
 # Crear pestañas
-tabs = st.tabs(["Chat", "Interactuar con Documentos", "Generar Imágenes"])
+tabs = st.tabs(["Chat", "Chat con Documentos", "Generar Imágenes"])
 
 # Pestaña de Chat
 with tabs[0]:
