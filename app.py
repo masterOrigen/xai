@@ -22,7 +22,7 @@ tabs = st.tabs(["Chat", "Interactuar con Documentos", "Generar Imágenes"])
 # Pestaña de Chat
 with tabs[0]:
     st.header("Chat")
-    prompt = st.text_input("Escribe tu pregunta o mensaje:")
+    prompt = st.text_area("Escribe tu pregunta o mensaje:")  # Cambiado a área de texto
     if st.button("Enviar") and prompt.strip():
         headers = {
             "Content-Type": "application/json",
